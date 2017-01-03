@@ -9,3 +9,6 @@ mock
 # Just for documentation generation
 sphinx
 sphinx-autobuild
+
+# Needed for testing & if tegola import handler is enabled.
+toml

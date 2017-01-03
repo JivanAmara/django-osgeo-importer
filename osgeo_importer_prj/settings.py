@@ -38,6 +38,7 @@ IMPORT_HANDLERS = [
     'osgeo_importer.handlers.geoserver.GenericSLDHandler',
     'osgeo_importer.handlers.geonode.GeoNodePublishHandler',
 #     'osgeo_importer.handlers.mapproxy.publish_handler.MapProxyGPKGTilePublishHandler',
+#     'osgeo_importer.handlers.tegola.publish_handler.TegolaVectorDataPublishHandler',
     'osgeo_importer.handlers.geoserver.GeoServerStyleHandler',
     'osgeo_importer.handlers.geonode.GeoNodeMetadataHandler'
 ]
@@ -113,3 +114,9 @@ MAPPROXY_CONFIG_FILENAME = 'geonode.yaml'
 # URLs will look like this: /geonode/tms/1.0.0/<layer_name>/<grid_name>/0/0/0.png and a <grid_name> will be
 #    set as '<layer_name>_<projection_id>' (by conf_from_geopackage()).
 MAPPROXY_SERVER_LOCATION = 'http://localhost:8088/geonode/tms/1.0.0/{layer_name}/{grid_name}/'
+
+# # === Tegola settings
+# # This is the directory for the tegola config file to be placed
+# TEGOLA_CONFIG_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), 'tegola_confdir'))
+# # This is the name of the tegola config file
+# TEGOLA_CONFIG_FILENAME = 'config.toml'

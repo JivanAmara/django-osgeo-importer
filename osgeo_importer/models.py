@@ -317,3 +317,10 @@ class MapProxyCacheConfig(models.Model):
     # Location of the file this config is for
     gpkg_filepath = models.CharField(max_length=1000)
     config = models.TextField()
+
+
+class TegolaLayerConfig(models.Model):
+    """ Each instance stores the TOML configuration for tegola to serve the referenced layer.
+    """
+    layer = models.OneToOneField(UploadLayer)
+    config = models.TextField()
