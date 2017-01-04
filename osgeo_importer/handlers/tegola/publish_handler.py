@@ -14,11 +14,14 @@ logger = getLogger(__name__)
 class TegolaVectorDataPublishHandler(ImportHandlerMixin):
     def handle(self, layer, layer_config, *args, **kwargs):
         if layer_config.get('layer_type') == 'vector':
+            # *** Is the port setting in the config even respected?  Do we want to use it?
             tegola_port = settings.TEGOLA_PORT if hasattr(settings, 'TEGOLA_PORT') else 9090
 
             postgis_table_name = layer
             postgis_db_host = settings.DATABASES['datastore']['HOST']
-            postgis_db_port = settings.DATABASES['datastore']['PORT']
+            # In case the port
+            port_string = settings.DATABASES['datastore']['PORT']
+            postgis_db_port = int(port_string)
             postgis_db_name = settings.DATABASES['datastore']['NAME']
             postgis_user = settings.DATABASES['datastore']['USER']
             postgis_pass = settings.DATABASES['datastore']['PASSWORD']
@@ -39,6 +42,7 @@ class TegolaVectorDataPublishHandler(ImportHandlerMixin):
                 'srid': srid,  # The default srid for this provider. If not provided it will be WebMercator (3857)
             }
 
+
             layer_config = {
                 'name': layer_name,  # will be encoded as the layer name in the tile
                 'tablename': postgis_table_name,  # sql or table_name are required
@@ -53,8 +57,19 @@ class TegolaVectorDataPublishHandler(ImportHandlerMixin):
 
             layer_configs = [toml.loads(tlc.config) for tlc in TegolaLayerConfig.objects.all()]
             provider_config['layers'] = [lc for lc in layer_configs]
+
+            # *** Where to pull actual zoom level limits from?
+            map_layers = [
+                {
+                    'provider_layer': 'geonode_postgis.{}'.format(lc['name']),
+                    'min_zoom': 0,
+                    'max_zoom': 16
+                } for lc in layer_configs
+            ]
+
             config = {
-                'providers': [provider_config]
+                'providers': [provider_config],
+                'maps': [ { 'name': 'geonode', 'layers': map_layers } ]
             }
 
             toml_config = toml.dumps(config)
