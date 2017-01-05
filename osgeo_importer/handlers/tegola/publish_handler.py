@@ -45,7 +45,7 @@ class TegolaVectorDataPublishHandler(ImportHandlerMixin):
             }
 
 
-            layer_config = {
+            tegola_layer_config_dict = {
                 'name': layer_name,  # will be encoded as the layer name in the tile
                 'tablename': postgis_table_name,  # sql or table_name are required
                 'geometry_fieldname': geometry_field_name,  # geom field. default is geom
@@ -54,8 +54,8 @@ class TegolaVectorDataPublishHandler(ImportHandlerMixin):
             }
 
             uploaded_layer = UploadLayer.objects.get(layer_name=layer_name)
-            layer_toml_config = toml.dumps(layer_config)
-            TegolaLayerConfig.objects.create(layer=uploaded_layer, config=layer_toml_config)
+            tegola_layer_config_toml = toml.dumps(tegola_layer_config_dict)
+            TegolaLayerConfig.objects.create(layer=uploaded_layer, config=tegola_layer_config_toml)
 
             layer_configs = [toml.loads(tlc.config) for tlc in TegolaLayerConfig.objects.all()]
             provider_config['layers'] = [lc for lc in layer_configs]
@@ -82,11 +82,15 @@ class TegolaVectorDataPublishHandler(ImportHandlerMixin):
 #             db_engine_name = db_engine_import.split('.')[-1]
 
             # Create TMS link for this layer via tegola.
-            geonode_layer = Layer.objects.get(id=layer_config['geonode_layer_id'])
-            link_url = settings.TEGOLA_SERVER_URL.format(layer_name=geonode_layer.name)
-            Link.objects.create(
-                extension='html', link_type='TMS', name='Tiles-Tegola', mime='text/html',
-                url=link_url, resource=geonode_layer.resourcebase_ptr
-            )
+            if 'geonode_layer_id' in layer_config:
+                geonode_layer = Layer.objects.get(id=layer_config['geonode_layer_id'])
+                link_url = settings.TEGOLA_SERVER_URL.format(layer_name=layer_name)
+                Link.objects.create(
+                    extension='html', link_type='TMS', name='Tiles-Tegola', mime='text/html',
+                    url=link_url, resource=geonode_layer.resourcebase_ptr
+                )
+            else:
+                logger.error('No "geonode_layer_id" in layer_config, can not create Link instance.'
+                            '  Did you put "TegolaVectorDataPublishHandler" after "GeoNodePublishHandler"?')
         else:
             logger.info('Layer: "{}" is not a vector layer, ignoring it.'.format(layer_config.get('name')))
