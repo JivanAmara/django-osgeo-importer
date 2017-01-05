@@ -1,3 +1,5 @@
+from geonode.base.models import Link
+from geonode.layers.models import Layer
 from logging import getLogger
 import os
 
@@ -78,5 +80,13 @@ class TegolaVectorDataPublishHandler(ImportHandlerMixin):
                 f.write(toml_config)
 #             db_engine_import = settings.DATABASES['datastore']['ENGINE']
 #             db_engine_name = db_engine_import.split('.')[-1]
+
+            # Create TMS link for this layer via tegola.
+            geonode_layer = Layer.objects.get(id=layer_config['geonode_layer_id'])
+            link_url = settings.TEGOLA_SERVER_URL.format(layer_name=geonode_layer.name)
+            Link.objects.create(
+                extension='html', link_type='TMS', name='Tiles-Tegola', mime='text/html',
+                url=link_url, resource=geonode_layer.resourcebase_ptr
+            )
         else:
             logger.info('Layer: "{}" is not a vector layer, ignoring it.'.format(layer_config.get('name')))

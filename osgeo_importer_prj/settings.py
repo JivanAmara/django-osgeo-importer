@@ -30,16 +30,16 @@ IMPORT_HANDLERS = [
     # If GeoServer handlers are enabled, you must have an instance of geoserver running.
     # Warning: the order of the handlers here matters.
     'osgeo_importer.handlers.FieldConverterHandler',
-    'osgeo_importer.handlers.geoserver.GeoserverPublishHandler',
-    'osgeo_importer.handlers.geoserver.GeoserverPublishCoverageHandler',
-    'osgeo_importer.handlers.geoserver.GeoServerTimeHandler',
-    'osgeo_importer.handlers.geoserver.GeoWebCacheHandler',
-    'osgeo_importer.handlers.geoserver.GeoServerBoundsHandler',
-    'osgeo_importer.handlers.geoserver.GenericSLDHandler',
+#     'osgeo_importer.handlers.geoserver.GeoserverPublishHandler',
+#     'osgeo_importer.handlers.geoserver.GeoserverPublishCoverageHandler',
+#     'osgeo_importer.handlers.geoserver.GeoServerTimeHandler',
+#     'osgeo_importer.handlers.geoserver.GeoWebCacheHandler',
+#     'osgeo_importer.handlers.geoserver.GeoServerBoundsHandler',
+#     'osgeo_importer.handlers.geoserver.GenericSLDHandler',
     'osgeo_importer.handlers.geonode.GeoNodePublishHandler',
 #     'osgeo_importer.handlers.mapproxy.publish_handler.MapProxyGPKGTilePublishHandler',
-#     'osgeo_importer.handlers.tegola.publish_handler.TegolaVectorDataPublishHandler',
-    'osgeo_importer.handlers.geoserver.GeoServerStyleHandler',
+    'osgeo_importer.handlers.tegola.publish_handler.TegolaVectorDataPublishHandler',
+#     'osgeo_importer.handlers.geoserver.GeoServerStyleHandler',
     'osgeo_importer.handlers.geonode.GeoNodeMetadataHandler'
 ]
 
@@ -76,8 +76,8 @@ LOCALE_PATHS = (
 
 
 INSTALLED_APPS = INSTALLED_APPS + ("osgeo_importer",)
-# # Remove 'geonode.geoserver', useful for experimenting with a geoserver-less configuration.
-# INSTALLED_APPS = [ a for a in INSTALLED_APPS if a != 'geonode.geoserver' ]
+# Remove 'geonode.geoserver', useful for experimenting with a geoserver-less configuration.
+INSTALLED_APPS = [ a for a in INSTALLED_APPS if a != 'geonode.geoserver' ]
 
 DATABASES = {
     'default': {
@@ -115,8 +115,10 @@ MAPPROXY_CONFIG_FILENAME = 'geonode.yaml'
 #    set as '<layer_name>_<projection_id>' (by conf_from_geopackage()).
 MAPPROXY_SERVER_LOCATION = 'http://localhost:8088/geonode/tms/1.0.0/{layer_name}/{grid_name}/'
 
-# # === Tegola settings
-# # This is the directory for the tegola config file to be placed
-# TEGOLA_CONFIG_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), 'tegola_confdir'))
-# # This is the name of the tegola config file
-# TEGOLA_CONFIG_FILENAME = 'config.toml'
+# === Tegola settings
+# This is the directory for the tegola config file to be placed
+TEGOLA_CONFIG_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), 'tegola_confdir'))
+# This is the name of the tegola config file
+TEGOLA_CONFIG_FILENAME = 'config.toml'
+# URL template to use for accessing vector tiles in z/x/y.pbf format
+TEGOLA_SERVER_URL = 'http://localhost:8089/maps/geonode/{layer_name}/'
